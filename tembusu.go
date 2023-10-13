@@ -37,7 +37,7 @@ func handle(conn *net.TCPConn) {
 
 		if (content == "check") {
 			cmd := exec.Command("sinfo", "--Node", "--format=\"%8N %10P %5T %5c %8O\"")
-			out, err := cmd.CombinedOutput()
+			out, err := cmd.Output()
 			if err != nil {
 				fmt.Printf("combined out:\n%s\n", string(out))
 				log.Fatalf("cmd.Run() failed with %s\n", err)
