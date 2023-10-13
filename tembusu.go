@@ -42,7 +42,7 @@ func handle(conn *net.TCPConn) {
 				fmt.Printf("combined out:\n%s\n", string(out))
 				log.Fatalf("cmd.Run() failed with %s\n", err)
 			}
-			fmt.Printf("combined out:\n%s\n", string(out))
+			fmt.Printf("combined out:\n%s\n", []byte(string(out)))
 			conn.Write([]byte(string(out)))
 		}
 	}
