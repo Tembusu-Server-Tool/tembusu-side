@@ -12,7 +12,7 @@ import (
 
 func main() {
 	var tcpAddr *net.TCPAddr
-	tcpAddr, _ = net.ResolveTCPAddr("tcp", "localhost:4000")
+	tcpAddr, _ = net.ResolveTCPAddr("tcp", "172.19.10.163:4000")
 	var conn *net.TCPConn
 	var err error
 	for {
