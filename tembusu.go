@@ -36,7 +36,7 @@ func handle(conn *net.TCPConn) {
 		content := strings.Replace(string(data), "\n", "", -1)
 
 		if (content == "check") {
-			cmd := exec.Command("sinfo", "--Node", "--format=\"%10N %10P %10T %.4c %8O\"")
+			cmd := exec.Command("sinfo", "--Node", "--format=\"%8N %10P %5T %5c %8O\"")
 			out, err := cmd.CombinedOutput()
 			if err != nil {
 				fmt.Printf("combined out:\n%s\n", string(out))
