@@ -12,20 +12,21 @@ import (
 
 func main() {
 	var tcpAddr *net.TCPAddr
-	tcpAddr, _ = net.ResolveTCPAddr("tcp", "172.26.191.78:4000")
 	var conn *net.TCPConn
-	var err error
+	tcpAddr, _ = net.ResolveTCPAddr("tcp", "172.26.191.78:4000")
+	tcpListener, err := net.ListenTCP("tcp", tcpAddr)
+	if (err != nil) {
+		fmt.Println(err)
+	} 
 	for {
-		conn, err = net.DialTCP("tcp", nil, tcpAddr)
-		if (err != nil) {
+		tcpConn, err := tcpListener.AcceptTCP()
+		if err != nil {
 			fmt.Println(err)
 			time.Sleep(time.Second)
 			continue
-		} else {
-			break
 		}
+		fmt.Println("A client connected:" + tcpConn.RemoteAddr().String())
 	}
-	fmt.Println("connected!")
 
 	reader := bufio.NewReader(conn)
 	for {
