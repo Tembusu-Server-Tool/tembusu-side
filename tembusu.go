@@ -34,16 +34,15 @@ func handle(conn *net.TCPConn) {
 	for {
 		data, _ := reader.ReadString('\n')
 		content := strings.Replace(string(data), "\n", "", -1)
-
-		if (content == "request") {
-			cmd := exec.Command("sinfo")
-			out, err := cmd.CombinedOutput()
-			if err != nil {
-				fmt.Printf("combined out:\n%s\n", string(out))
-				log.Fatalf("cmd.Run() failed with %s\n", err)
-			}
-			fmt.Printf("combined out:\n%s\n", []byte(string(out)))
-			conn.Write([]byte(string(out)))
+		fmt.Println("Command is " + content)
+		cmd := exec.Command(content)
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			fmt.Printf("combined out:\n%s\n", string(out))
+			log.Fatalf("cmd.Run() failed with %s\n", err)
 		}
+		fmt.Printf("combined out:\n%s\n", []byte(string(out)))
+		conn.Write([]byte(string(out)))
+		
 	}
 }
