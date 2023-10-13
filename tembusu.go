@@ -12,7 +12,6 @@ import (
 
 func main() {
 	var tcpAddr *net.TCPAddr
-	var conn *net.TCPConn
 	tcpAddr, _ = net.ResolveTCPAddr("tcp", "192.168.51.112:4000")
 	tcpListener, err := net.ListenTCP("tcp", tcpAddr)
 	if (err != nil) {
@@ -26,8 +25,11 @@ func main() {
 			continue
 		}
 		fmt.Println("A client connected:" + tcpConn.RemoteAddr().String())
+		go handle(tcpConn)
 	}
+}
 
+func handle(conn *net.TCPConn) {
 	reader := bufio.NewReader(conn)
 	for {
 		data, _ := reader.ReadString('\n')
@@ -44,6 +46,4 @@ func main() {
 			conn.Write([]byte(out))
 		}
 	}
-
-
 }
