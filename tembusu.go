@@ -13,7 +13,7 @@ import (
 func main() {
 	var tcpAddr *net.TCPAddr
 	var conn *net.TCPConn
-	tcpAddr, _ = net.ResolveTCPAddr("tcp", "172.26.191.78:4000")
+	tcpAddr, _ = net.ResolveTCPAddr("tcp", "192.168.51.112:4000")
 	tcpListener, err := net.ListenTCP("tcp", tcpAddr)
 	if (err != nil) {
 		fmt.Println(err)
