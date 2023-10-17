@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	// "os/exec"
+	"os/exec"
 	"net/http"
 	// "time"
 	// "bufio"
@@ -27,7 +27,15 @@ func cors(f http.HandlerFunc) http.HandlerFunc {
 func handle(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	fmt.Println(r.Form)
-	fmt.Fprintf(w, "Hello!")
+
+	cmd := exec.Command("sinfo", "--Node", "--format=\"%8N %10P %5T %5c %8O\"")
+	out, err := cmd.Output()
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Printf("combined out:\n%s\n", out)
+
+	fmt.Fprintf(w, string(out))
 }
 
 func main() {
