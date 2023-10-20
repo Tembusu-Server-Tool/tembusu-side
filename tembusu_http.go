@@ -6,7 +6,7 @@ import (
 	"net/http"
 	// "time"
 	// "bufio"
-	// "strings"
+	"strings"
 )
 
 func cors(f http.HandlerFunc) http.HandlerFunc {
@@ -24,7 +24,7 @@ func cors(f http.HandlerFunc) http.HandlerFunc {
     }
 }
 
-func handle(w http.ResponseWriter, r *http.Request) {
+func handleCheck(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	fmt.Println(r.Form)
 
@@ -38,10 +38,40 @@ func handle(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, string(out))
 }
 
-func main() {
-	http.HandleFunc("/check", handle)
-	err := http.ListenAndServe("192.168.51.112:4000", cors(handle))
+type machineInfo struct {
+	name string
+	status string
+}
+// Parse string to [{machineId, }] and select all long and idle machine
+func parse(out string) {
+	lines := strings.Split(out, "\n")
+	for index, _ := range lines {
+		lines[index] = lines[index][1:-1]
+	}
+	output := make()
+	for _, line := range lines {
+		elements := strings.Split(line, " ")
+		
+	}
+
+}
+
+func handlePredict(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	fmt.Println(r.Form)
+
+	cmd := exec.Command("sinfo", "--Node", "--format=\"%8N %10P %5T %5c %8O\"")
+	out, err := cmd.Output()
 	if err != nil {
 		fmt.Println(err)
 	}
+
+	parsedOut = parse(out)
+}
+
+func main() {
+	http.HandleFunc("/check", handleCheck)
+	http.HandleFunc("/predict", handlePredict)
+	http.ListenAndServe("192.168.51.112:4000", cors(handleCheck))
+	http.ListenAndServe("192.168.51.112:4000", cors(handlePredict))
 }
