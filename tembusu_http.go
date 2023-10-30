@@ -42,18 +42,53 @@ type machineInfo struct {
 	name string
 	status string
 }
-// Parse string to [{machineId, }] and select all long and idle machine
-func parse(out string) {
+// Parse string to [{machineId, }]
+// Example: [xgph19 long mixed 64 2.10]
+func parse(out string) [][]string {
 	lines := strings.Split(out, "\n")
 	for index, _ := range lines {
-		lines[index] = lines[index][1:-1]
+		lines[index] = lines[index][1:len(lines[index]) - 1]
 	}
-	output := make()
-	for _, line := range lines {
-		elements := strings.Split(line, " ")
-		
+	parsedOut := make([][]string, len(lines))
+	for index, line := range lines {
+		elements := strings.Split(strings.Join(strings.Fields(line), " "), " ")
+		parsedOut[index] = elements
 	}
+	return parsedOut
+}
 
+// Filter long and idle machines with most CPUs
+func filter(machines [][]string) []string {
+	fmt.Println(machines)
+	var filteredMachines []string
+	for _, machine := range machines {
+		if machine[0] == "xcnc" {
+			continue
+		}
+		if machine[0] == "xcnd" {
+			continue
+		}
+		if machine[1] == "long"  {
+			if machine[2] == "idle" {
+				filteredMachines = append(filteredMachines, machine[0])
+			}
+		}
+	}
+	return filteredMachines
+
+}
+
+// Convert [{machines, }] to machinesId,machinesId which can be used in script
+func generate(filteredMachines []string) string {
+	size := len(filteredMachines)
+	if (size < 20) {
+		return "The number of long and idle machines is not enough"
+	}
+	result := ""
+	for i := size - 1; i >= 0; i-- {
+		result += filteredMachines[i]
+	}
+	return result
 }
 
 func handlePredict(w http.ResponseWriter, r *http.Request) {
@@ -66,12 +101,22 @@ func handlePredict(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 
-	parsedOut = parse(out)
+	parsedOut := parse(string(out))
+	filteredResult := filter(parsedOut)
+	finalResult := generate(filteredResult)
+
+	fmt.Fprintf(w, finalResult)
 }
 
 func main() {
-	http.HandleFunc("/check", handleCheck)
-	http.HandleFunc("/predict", handlePredict)
-	http.ListenAndServe("192.168.51.112:4000", cors(handleCheck))
-	http.ListenAndServe("192.168.51.112:4000", cors(handlePredict))
+	out := "\"xgph7    long     idle 64    2.55\"\n\"xgph7    long       mixed 64    2.55 \""
+	parsedOut := parse(out)
+	fmt.Println(parsedOut)
+	filteredResult := filter(parsedOut)
+	fmt.Println(filteredResult)
+	// finalResult := generate(filteredResult)
+	// http.HandleFunc("/check", handleCheck)
+	// http.HandleFunc("/predict", handlePredict)
+	// http.ListenAndServe("192.168.51.112:4000", cors(handleCheck))
+	// http.ListenAndServe("192.168.51.112:4000", cors(handlePredict))
 }
