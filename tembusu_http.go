@@ -81,13 +81,14 @@ func filter(machines [][]string) []string {
 // Convert [{machines, }] to machinesId,machinesId which can be used in script
 func generate(filteredMachines []string) string {
 	size := len(filteredMachines)
-	if (size < 20) {
+	if (size < 1) {
 		return "The number of long and idle machines is not enough"
 	}
 	result := ""
 	for i := size - 1; i >= 0; i-- {
-		result += filteredMachines[i]
+		result += filteredMachines[i] + ","
 	}
+	result = result[0:len(result) - 1]
 	return result
 }
 
@@ -109,12 +110,13 @@ func handlePredict(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	out := "\"xgph7    long     idle 64    2.55\"\n\"xgph7    long       mixed 64    2.55 \""
+	out := "\"xgph7    long     idle 64    2.55\"\n\"xgph8    long       idle 64    2.55 \""
 	parsedOut := parse(out)
 	fmt.Println(parsedOut)
 	filteredResult := filter(parsedOut)
 	fmt.Println(filteredResult)
-	// finalResult := generate(filteredResult)
+	finalResult := generate(filteredResult)
+	fmt.Println(finalResult)
 	// http.HandleFunc("/check", handleCheck)
 	// http.HandleFunc("/predict", handlePredict)
 	// http.ListenAndServe("192.168.51.112:4000", cors(handleCheck))
